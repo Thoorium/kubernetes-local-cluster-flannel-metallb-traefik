@@ -219,4 +219,10 @@ Edit this file if you want to use another domain than `cheeses.kube`.
 ```bash
 kubectl apply -f cheese/cheese-ingress.yaml
 ```
-You should be able to visit the domain and view a picture of the cheese, acording to the path you visit (path must end with `/` for the picture to load).
+You should be able to visit the domain and view a picture of the cheese, according to the path you visit.
+
+- http://cheeses.kube/cheddar/
+- http://cheeses.kube/stilton/
+- http://cheeses.kube/wensleydale/
+
+For technical reasons, the path must end with `/` for the picture to load.
