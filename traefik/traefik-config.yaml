@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-configmap
+  namespace: traefik
+data:
+  traefik.toml: |
+    #defaultEntryPoints = ["http","https"]
+    defaultEntryPoints = ["http"]
+
+    [entryPoints]
+
+      [entryPoints.http]
+      address = ":80"
+
+
+      #[entryPoints.https]
+      #address = ":443"
+      #  [entryPoints.https.tls]
+      #    [[entryPoints.https.tls.certificates]]
+      #    CertFile = "/ssl/tls.crt"
+      #    KeyFile = "/ssl/tls.key"
+
+      [entryPoints.traefik]
+        address = ":8080"
+        [entryPoints.traefik.auth.basic]
+        users = ["admin:$apr1$zjjGWKW4$W2JIcu4m26WzOzzESDF0W/"]
+
+    [kubernetes]
+      [kubernetes.ingressEndpoint]
+        publishedService = "traefik/traefik"
+
+    [ping]
+    entryPoint = "http"
+
+    [api]
+    entryPoint = "traefik"
