@@ -1,15 +1,15 @@
 # Local Kubernetes cluster with flannel, metallb and traefik
-This guide will set you up a local kubernetes cluster. It is the result of me trying many different things and eventually getting everything to run smoothly. I am not too familiar with all the Kubernetes components so this guide is mostly "run command X to do Y".
+This guide will set you up a local kubernetes cluster. It is the result of me trying many different things and eventually getting everything to run smoothly. I am not too familiar with all the Kubernetes components yet so this guide is mostly "run command X to do Y".
 ## Prerequisites
 - Ubuntu 18.04 on a virtual machine or bare metal computer
-- At least 2 cores
-- At least 4GB of ram
+- At least 1 CPU with 2 cores
+- At least 4GB of memory
 - At least 20GB of storage space
   
 Repeat this configuration for all the nodes you want in your cluster.
 
 ## 1. Host preparation
-Disable the swap.
+Disable the swap. Kubernetes doesn't want swap enabled.
 ```bash
 sudo nano /etc/fstab
 
@@ -61,7 +61,7 @@ sudo reboot now
 ## 3. Install kubernetes
 `Source https://kubernetes.io/docs/setup/independent/install-kubeadm/`  
 
-Install kubeadm, kubelet and kubectl. Must be done as root! 
+Install kubeadm, kubelet and kubectl. This must be done as root! 
 ```bash
 sudo su
 ```
@@ -79,7 +79,7 @@ apt-mark hold kubelet kubeadm kubectl
 ## 4. Install the master node
 `Source https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/` 
 
-Create the master node with using Flannel as the CNI.
+Create the master node using Flannel as the CNI.
 ```bash
 sysctl net.bridge.bridge-nf-call-iptables=1
 kubeadm init --pod-network-cidr=10.244.0.0/16
@@ -90,13 +90,13 @@ Go back to a normal user.
 ```bash
 exit
 ```
-Allow the current user to user kubectl with the cluster.
+Allow the current user to use kubectl with the cluster.
 ```bash
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-Install Flannel CNI.
+Install Flannel.
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
 ```
@@ -138,7 +138,7 @@ We'll use Metallb for this scenario.
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
 ```
-Create a config file to give a range of ip address the load balancer can assign. Make sure that those IPs can't be assigned by your DHCP server.
+Create a config file to give a range of ip address the load balancer can assign. Make sure those IPs can't be assigned by your DHCP server.
 
 Create a file named `metallb-config.yaml` with the following content:  
 ```yaml
@@ -183,7 +183,7 @@ Deploy the traefik reverse-proxy and dashboard.
 kubectl apply -f traefik/traefik-deployment.yaml
 ```
 Create the ingress rule for the dashboard and bind it to a domain.  
-Edit this file if you want to use another domain than `trafik-ui.kube`.
+Edit this file if you want to use another domain than `traefik-ui.kube`.
 ```bash
 kubectl apply -f traefik/traefik-ingress-dashboard.yaml
 ```
@@ -199,7 +199,7 @@ kubeadm join 192.168.0.41:6443 --token xj28lv.7u8t1d1judei6eqz --discovery-token
 ```
 
 ## 9. Deploy an app (Optionnal)
-This uses the cheese demo from traefik.  
+Based on the cheese demo from traefik.  
 `Source https://docs.traefik.io/user-guide/kubernetes`  
 
 Create the cheese namespace.
