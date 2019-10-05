@@ -24,11 +24,22 @@ rules:
       - list
       - watch
   - apiGroups:
-    - extensions
+      - extensions
     resources:
-    - ingresses/status
+      - ingresses/status
     verbs:
-    - update
+      - update
+  - apiGroups:
+      - traefik.containo.us
+    resources:
+      - tlsoptions
+      - middlewares
+      - ingressroutes
+      - ingressroutetcps
+    verbs:
+      - get
+      - list
+      - watch
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
