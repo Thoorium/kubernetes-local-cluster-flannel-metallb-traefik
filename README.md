@@ -153,7 +153,7 @@ If you used the unsecured option, use the `skip` button to login.
 
 We'll use Metallb for this scenario.
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
 ```
 Create a config file to give a range of ip address the load balancer can assign. Make sure those IPs can't be assigned by your DHCP server.
 
