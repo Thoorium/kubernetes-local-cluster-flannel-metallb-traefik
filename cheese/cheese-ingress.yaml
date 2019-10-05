@@ -1,27 +1,44 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: cheesestripprefix
+  namespace: cheese
+spec:
+  stripPrefix:
+    prefixes:
+      - /stilton
+      - /cheddar
+      - /wensleydale
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
   name: cheeses
   namespace: cheese
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http
-    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
-   # traefik.frontend.rule.type: PathPrefixStrip
 spec:
-  rules:
-  - host: cheeses.kube
-    http:
-      paths:
-      - path: /stilton
-        backend:
-          serviceName: stilton
-          servicePort: http
-      - path: /cheddar
-        backend:
-          serviceName: cheddar
-          servicePort: http
-      - path: /wensleydale
-        backend:
-          serviceName: wensleydale
-          servicePort: http
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`cheeses.kube`) && PathPrefix(`/stilton`)
+    kind: Rule
+    services:
+    - name: stilton
+      port: 80
+    middlewares:
+      - name: cheesestripprefix
+  - match: Host(`cheeses.kube`) && PathPrefix(`/cheddar`)
+    kind: Rule
+    services:
+    - name: cheddar
+      port: 80 
+    middlewares:
+      - name: cheesestripprefix
+  - match: Host(`cheeses.kube`) && PathPrefix(`/wensleydale`)
+    kind: Rule
+    services:
+    - name: wensleydale
+      port: 80 
+    middlewares:
+      - name: cheesestripprefix

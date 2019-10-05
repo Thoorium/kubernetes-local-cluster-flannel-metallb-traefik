@@ -184,26 +184,36 @@ kubectl apply -f metallb-config.yaml
 The ingress controller in this scenario will act as a reverse-proxy for your applications. This will enable domain binding, routing, url rewrite, etc. For more information, please visit the traefik documentation at https://docs.traefik.io/configuration/backends/kubernetes/.
 
 Create a namespace for traefik.
+
 ```bash
 kubectl create namespace traefik
 ```
-Deploy the traefik config.
-```bash
-kubectl apply -f traefik/traefik-config.yaml
-```
+
 Apply the ClusterRoleBinding.
+
 ```bash
 kubectl apply -f traefik/traefik-rbac.yaml
 ```
+
+Deploy the traefik custom definitions.
+
+```bash
+kubectl apply -f traefik/traefik-definition.yaml
+```
+
 Deploy the traefik reverse-proxy and dashboard.
+
 ```bash
 kubectl apply -f traefik/traefik-deployment.yaml
 ```
+
 Create the ingress rule for the dashboard and bind it to a domain.  
 Edit this file if you want to use another domain than `traefik-ui.kube`.
+
 ```bash
 kubectl apply -f traefik/traefik-ingress-dashboard.yaml
 ```
+
 You should now be able to visit the domain and view the dashboard. 
 Since the dashboard is served via traefik, there should be frontend/backend rule for it.
 

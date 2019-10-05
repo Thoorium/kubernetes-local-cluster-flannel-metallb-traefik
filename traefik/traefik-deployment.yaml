@@ -36,28 +36,10 @@ spec:
         args:
         - --api.insecure
         - --accesslog
-       # - --providers.kubernetescrd
-        - --providers.kubernetesingress
+        - --providers.kubernetescrd
         - --entrypoints.web.Address=:80
         - --entrypoints.websecure.Address=:443
 ---
-#kind: Service
-#apiVersion: v1
-#metadata:
-#  name: traefik-ingress-service
-#  namespace: traefik
-#spec:
-#  selector:
-#    k8s-app: traefik-ingress-lb
-#  ports:
-#    - protocol: TCP
-#      port: 80
-#      name: web
-#    - protocol: TCP
-#      port: 8080
-#      name: dashboard
-## type: NodePort
-#  type: LoadBalancer
 kind: Service
 apiVersion: v1
 metadata:
