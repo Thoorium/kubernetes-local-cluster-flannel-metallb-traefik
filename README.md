@@ -98,7 +98,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 Install Flannel.
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml
 ```
 ### Optionnal
 Allow pods to be created on the master node.
@@ -109,24 +109,41 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 ## 5. Install the dashboard
 `Source https://github.com/kubernetes/dashboard`
 `Source https://github.com/kubernetes/dashboard/wiki/Access-control`
-### Option 1: Secured (Preferred)
-You will have to install / configure an authentication method. I do not explain how to do this in this guide.
+`Source https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/`
+
+### Option 1: Secured (Preferred - But currently broken)
+Create the dashboard using the recommended method.
+
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta4/aio/deploy/recommended.yaml
 ```
-### Option 2: Unsecured (The one I ended up using)
-```bash
-kubectl apply -f dashboard/kubernetes-dashboard-unsecured.yaml
-```
-### Create an admin role for the dashboard, to view everything (Not recommended for production)
+
+Then create an admin user able to see everything.
+
 ```bash
 kubectl apply -f dashboard/kubernetes-dashboard-admin.yaml
 ```
+
+Retrieve the Bearer Token for authentication on the login page.
+
+```bash
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+```
+
+After exposing the dashboard, copy the token into the token input field and press the login button.
+
+### Option 2: Unsecured
+This will expose everything without requiring to login. Do not use this in production.
+```bash
+kubectl apply -f dashboard/kubernetes-dashboard-unsecured.yaml
+```
+
+### Expose the dashboard
 Start a proxy to view the dashboard (Replace the IP with the one of your kubernetes master node host).
 ```bash
 kubectl proxy --address 192.168.0.41 --port 8001 --accept-hosts='^*$'
 ```
-View the dashboard at http://192.168.0.41:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/.
+View the dashboard at http://192.168.0.41:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
 
 If you used the unsecured option, use the `skip` button to login.
 
